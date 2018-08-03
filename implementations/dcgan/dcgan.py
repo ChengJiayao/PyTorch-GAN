@@ -9,6 +9,7 @@ from torchvision.utils import save_image
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torch.autograd import Variable
+from utils import save_model, load_model
 
 import torch.nn as nn
 import torch.nn.functional as F
@@ -131,11 +132,16 @@ optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=opt.lr, betas=(opt
 
 Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
+# -----------
+# Load Previous model, if exists
+# -----------
+generator, discriminator, init_epoch = load_model(generator, discriminator, model_save_dir)
+
 # ----------
 #  Training
 # ----------
 
-for epoch in range(opt.n_epochs):
+for epoch in range(init_epoch, opt.n_epochs):
     for i, (imgs, _) in enumerate(dataloader):
 
         # Adversarial ground truths
@@ -183,3 +189,5 @@ for epoch in range(opt.n_epochs):
         batches_done = epoch * len(dataloader) + i
         if batches_done % opt.sample_interval == 0:
             save_image(gen_imgs.data[:25], 'images/%d.png' % batches_done, nrow=5, normalize=True)
+
+    save_model(generator, discriminator, model_save_dir, epoch)
