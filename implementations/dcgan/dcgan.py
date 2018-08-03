@@ -20,7 +20,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch
 
-model_save_dir='chkpts'
+model_save_dir='chkpts/'
 os.makedirs('images', exist_ok=True)
 os.makedirs(model_save_dir, exist_ok=True)
 
