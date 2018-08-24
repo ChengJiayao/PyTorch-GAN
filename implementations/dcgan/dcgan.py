@@ -58,12 +58,12 @@ class Generator(nn.Module):
         self.conv_blocks = nn.Sequential(
             nn.BatchNorm2d(128),
             nn.Upsample(scale_factor=2),
-            nn.Conv2d(128, 128, 3, stride=1, padding=1),
-            nn.BatchNorm2d(128, 0.8),
+            nn.Conv2d(128, 128, 3, stride=1, padding=1, bias=False),
+            nn.BatchNorm2d(128, momentum=0.01),
             nn.LeakyReLU(0.2, inplace=True),
             nn.Upsample(scale_factor=2),
-            nn.Conv2d(128, 64, 3, stride=1, padding=1),
-            nn.BatchNorm2d(64, 0.8),
+            nn.Conv2d(128, 64, 3, stride=1, padding=1, bias=False),
+            nn.BatchNorm2d(64, momentum=0.01),
             nn.LeakyReLU(0.2, inplace=True),
             nn.Conv2d(64, opt.channels, 3, stride=1, padding=1),
             nn.Tanh()
@@ -84,7 +84,7 @@ class Discriminator(nn.Module):
                         nn.LeakyReLU(0.2, inplace=True),
                         nn.Dropout2d(0.25)]
             if bn:
-                block.append(nn.BatchNorm2d(out_filters, 0.8))
+                block.append(nn.BatchNorm2d(out_filters, momentum=0.01))
             return block
 
         self.model = nn.Sequential(
